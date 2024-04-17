@@ -32,7 +32,7 @@ def scrape_html_from_website(url: str) -> str:
     price_selector = config_file.get("price_selector")
     wait = WebDriverWait(driver, 10)
     wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{price_selector}")))
-
+    
     page_source = driver.page_source
     driver.quit()
     return page_source

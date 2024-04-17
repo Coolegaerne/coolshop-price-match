@@ -1,0 +1,10 @@
+{
+    "cookie_selector": "button.coi-banner__accept:nth-child(3)",
+    "price_selector": ".xl\\:p-8 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1) > span:nth-child(1)",
+    "name_selector": "",
+    "ean_selector": "",
+    "color_selector": "",
+    "size_selector": "",
+    "shipping_price_selector": "",
+    "currency": "dk"
+}
