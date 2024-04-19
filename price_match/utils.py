@@ -11,6 +11,9 @@ import time
 from PIL import Image
 import io
 from selenium.webdriver.common.keys import Keys
+from urllib.parse import urlparse
+
+
 def with_product(url:str):
     product = Product()
     product.url = url
@@ -32,7 +35,7 @@ def scrape_html_from_website(config_file: dict, url: str) -> str:
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
     chrome_options.add_argument("--headless")
     # chrome_options.add_argument('--disable-gpu')
-
+    url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     try:
@@ -85,7 +88,8 @@ def get_product_from_html(config_file: dict, html: str, product: Product) -> Pro
     return product
 
 def __get_config_file(url: str) -> dict:
-    base_url = url.split("/")[2].removeprefix("www.")
+    no_prefix = url.removeprefix("http://").removeprefix("https://").removeprefix("www.")
+    base_url = no_prefix.split("/")[0]
     file_path = f"price_match/website_configs/{base_url}.json"
     try:
         with open(file_path, 'r') as file:
