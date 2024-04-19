@@ -13,6 +13,41 @@ class Product(models.Model):
     acceptance_datetime = models.DateTimeField(null=True, blank=True)
     product_image = models.ImageField(null=True, blank=True)
 
+
     def save(self, *args, **kwargs):
         self.total_price = self.price + self.shipping_cost
         super(Product, self).save(*args, **kwargs)
+
+
+    def create_from_dict(self, data_dict):
+        self.name = data_dict.get('name_selector')
+        self.price = float(data_dict.get('price_selector').replace('.', '').replace(',', '.').split('-')[0])  # Extract price and convert to float
+        self.ean = data_dict.get('ean_selector')
+        self.color = data_dict.get('color_selector')
+        return self
+    
+    def __str__(self):
+        return (
+            f"Name: {self.name}\n"
+            f"URL: {self.url}\n"
+            f"Price: {self.price}\n"
+            f"EAN: {self.ean}\n"
+            f"Color: {self.color}\n"
+            f"Shipping Cost: {self.shipping_cost}\n"
+            f"Total Price: {self.total_price}\n"
+            f"Accepted: {self.accepted}\n"
+            f"Creation Datetime: {self.creation_datetime}\n"
+            f"Acceptance Datetime: {self.acceptance_datetime}\n"
+        )
+
+class Config(models.Model):
+    slowest_element_selector = models.CharField(max_length=512, blank=True)
+    cookie_selector = models.CharField(max_length=512, blank=True)
+    specification_selector = models.CharField(max_length=512, blank=True)
+    price_selector = models.CharField(max_length=512, blank=True)
+    name_selector = models.CharField(max_length=512, blank=True)
+    ean_selector = models.CharField(max_length=512, blank=True)
+    color_selector = models.CharField(max_length=512, blank=True)
+    stock_status_selector = models.CharField(max_length=512, blank=True)
+    shipping_price_selector = models.CharField(max_length=512, blank=True)
+    currency = models.CharField(max_length=512, blank=True)

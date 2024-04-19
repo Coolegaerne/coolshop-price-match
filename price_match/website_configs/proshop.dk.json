@@ -1,10 +1,12 @@
 {
+    "slowest_element_selector": "#site-product-price-stock-buy-container > section > div.site-product-stock-price-buy.d-flex > span > span",
     "cookie_selector": "#coiPage-1 > div.coi-banner__page-footer > div.coi-button-group > button.coi-banner__accept",
+    "specification_selector": "",
     "price_selector": "#site-product-price-stock-buy-container > section > div.site-product-stock-price-buy.d-flex > span > span",
     "name_selector": "#site-product-price-stock-buy-container > h1:nth-child(2)",
-    "ean_selector": ".ean",
-    "color_selector": ".color",
-    "size_selector": ".size",
-    "shipping_price_selector": ".shipping-price",
+    "ean_selector": "#generalItemsAccordion > div:nth-child(4) > div:nth-child(2)",
+    "color_selector": "#generalItemsAccordion > div:nth-child(21) > div:nth-child(2)",
+    "stock_status_selector": "",
+    "shipping_price_selector": "",
     "currency": "kr"
 }

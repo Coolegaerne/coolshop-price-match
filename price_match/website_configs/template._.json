@@ -1,10 +1,12 @@
 {
+    "slowest_element_selector": "",
     "cookie_selector": "",
+    "specification_selector": "",
     "price_selector": "",
     "name_selector": "",
     "ean_selector": "",
     "color_selector": "",
-    "size_selector": "",
+    "stock_status_selector": "",
     "shipping_price_selector": "",
     "currency": ""
 }

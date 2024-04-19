@@ -1,10 +1,12 @@
 {
+    "slowest_element_selector": ".xl\\:p-8 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1) > span:nth-child(1)",
     "cookie_selector": "button.coi-banner__accept:nth-child(3)",
+    "specification_selector": ["body > div.min-h-screen > section > div:nth-child(7) > div > div.p-6.xl\\:p-20.pt-0.xl\\:pt-0.spec > div > div.grid.grid-cols-1.gap-4.md\\:grid-cols-2.md\\:col-span-2 > button"],
     "price_selector": ".xl\\:p-8 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1) > span:nth-child(1)",
-    "name_selector": "",
-    "ean_selector": "",
-    "color_selector": "",
-    "size_selector": "",
+    "name_selector": "body > div.min-h-screen > section > div.ProductPageHeader.bg-white.px-6.xl\\:px-20 > div > h1 > span",
+    "ean_selector": "body > div.min-h-screen > section > div:nth-child(7) > div > div.p-6.xl\\:p-20.pt-0.xl\\:pt-0.spec > div > div.grid.grid-cols-1.gap-4.md\\:grid-cols-2.md\\:col-span-2 > div:nth-child(1) > ul > dl:nth-child(9) > dd",
+    "color_selector": "body > div.min-h-screen > section > div:nth-child(7) > div > div.p-6.xl\\:p-20.pt-0.xl\\:pt-0.spec > div > div.grid.grid-cols-1.gap-4.md\\:grid-cols-2.md\\:col-span-2 > div:nth-child(1) > ul > dl:nth-child(5) > dd",
+    "stock_status_selector": "",
     "shipping_price_selector": "",
     "currency": "dk"
 }
