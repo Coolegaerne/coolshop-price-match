@@ -1,3 +1,4 @@
+import re
 from django.db import models
 
 class Product(models.Model):
@@ -21,7 +22,7 @@ class Product(models.Model):
 
     def create_from_dict(self, data_dict):
         self.name = data_dict.get('name_selector')
-        self.price = float(data_dict.get('price_selector').replace('.', '').replace(',', '.').split('-')[0])  # Extract price and convert to float
+        self.price = self.__extract_floats_from_string(data_dict.get('price_selector'))
         self.ean = data_dict.get('ean_selector')
         self.color = data_dict.get('color_selector')
         return self
@@ -39,6 +40,13 @@ class Product(models.Model):
             f"Creation Datetime: {self.creation_datetime}\n"
             f"Acceptance Datetime: {self.acceptance_datetime}\n"
         )
+    def __extract_floats_from_string(self,input_string):
+        pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
+
+        match = re.search(pattern, input_string)
+        
+        if match:
+            return float(match.group().replace(',', ''))
 
 class Config(models.Model):
     slowest_element_selector = models.CharField(max_length=512, blank=True)

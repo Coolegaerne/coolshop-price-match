@@ -30,7 +30,7 @@ def scrape_html_from_website(config_file: dict, url: str) -> str:
     chrome_options = Options()
     chrome_options.headless = True
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     # chrome_options.add_argument('--disable-gpu')
 
     driver = webdriver.Chrome(options=chrome_options)
@@ -62,7 +62,7 @@ def scrape_html_from_website(config_file: dict, url: str) -> str:
     # image = Image.open(io.BytesIO(image_data))
     # # Display the image
     # image.show()
-
+    
     page_source = driver.page_source
     driver.quit()
 

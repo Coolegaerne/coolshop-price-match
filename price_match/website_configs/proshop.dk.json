@@ -1,8 +1,8 @@
 {
-    "slowest_element_selector": "#site-product-price-stock-buy-container > section > div.site-product-stock-price-buy.d-flex > span > span",
+    "slowest_element_selector": ".site-currency-attention",
     "cookie_selector": "#coiPage-1 > div.coi-banner__page-footer > div.coi-button-group > button.coi-banner__accept",
     "specification_selector": "",
-    "price_selector": "#site-product-price-stock-buy-container > section > div.site-product-stock-price-buy.d-flex > span > span",
+    "price_selector": ".site-currency-attention",
     "name_selector": "#site-product-price-stock-buy-container > h1:nth-child(2)",
     "ean_selector": "#generalItemsAccordion > div:nth-child(4) > div:nth-child(2)",
     "color_selector": "#generalItemsAccordion > div:nth-child(21) > div:nth-child(2)",
