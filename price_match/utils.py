@@ -1,5 +1,6 @@
 import json
-from price_match.models import Product
+from price_match.models import Product, Config
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -10,6 +11,7 @@ from selenium.common.exceptions import ElementClickInterceptedException
 import time
 from PIL import Image
 import io
+import re
 from selenium.webdriver.common.keys import Keys
 from urllib.parse import urlparse
 
@@ -21,17 +23,16 @@ def with_product(url:str):
 
 
 def scrape_website(product: Product) -> Product:
-    config_file = __get_config_file(product.url)
+    config = __get_config(product.url)
 
-    page_source = scrape_html_from_website(config_file, product.url)
-    return get_product_from_html(config_file, page_source, product)
+    page_source = scrape_html_from_website(config, product.url)
+    return get_product_from_html(config, page_source, product)
 
 
-def scrape_html_from_website(config_file: dict, url: str) -> str:
+def scrape_html_from_website(config: Config, url: str) -> str:
     my_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"
 
     chrome_options = Options()
-    chrome_options.headless = True
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
     chrome_options.add_argument("--headless")
     # chrome_options.add_argument('--disable-gpu')
@@ -39,20 +40,22 @@ def scrape_html_from_website(config_file: dict, url: str) -> str:
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     try:
-        cookie_selector = config_file.get("cookie_selector")
+        cookie_selector = config.cookie_selector
         cookie_wait = WebDriverWait(driver, 10)
         cookie_accept = cookie_wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{cookie_selector}")))
         cookie_accept.click()
     except:
         pass
-
-    slowest_element_selector = config_file.get("slowest_element_selector")
+    
+    slowest_element_selector = config.slowest_element_selector
     slowest_element_wait = WebDriverWait(driver, 10)
     slowest_element_wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{slowest_element_selector}")))
     
-    specifications = config_file.get("specification_selector")
-    if specifications:
-        for specification in specifications:
+    specifications = config.specification_selector.split("¤")
+    
+    for specification in specifications:
+        if specification:
+            print(specification)
             specification_element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, specification)))
             for _ in range(3):
                 try:
@@ -72,28 +75,51 @@ def scrape_html_from_website(config_file: dict, url: str) -> str:
     return page_source
 
 
-def get_product_from_html(config_file: dict, html: str, product: Product) -> Product:
+def get_product_from_html(config: Config, html: str, product: Product) -> Product:
     soup = BeautifulSoup(html, "html.parser")
-    value_dict = {}
-    config_keys = list(config_file.keys())[3:]
-    for key in config_keys:
-        value = config_file.get(key)
-        try:
-            value = soup.select_one(value).get_text()
-            value_dict[key] = value
-        except:
-            pass
-    product.create_from_dict(value_dict)
+    try:
+        str_price = soup.select_one(config.price_selector).text
+        product.price = __extract_floats_from_string(str_price)
+    except:
+        pass
+    try:
+        product.name = soup.select_one(config.name_selector).text
+    except:
+        pass
+    try:
+        
+        product.ean = soup.select_one(config.ean_selector).text
+    except:
+        pass
+    try:
+        product.color = soup.select_one(config.color_selector).text
+    except:
+        pass
+            
+    try:
+        product.in_stock = soup.select_one(config.stock_status_selector).text
+    except:
+        pass
+        
+    try:
+        str_shipping_price = soup.select_one(config.shipping_price_selector).text
+        product.shipping_cost = __extract_floats_from_string(str_shipping_price)
+    except:
+        pass
+
     print(product)
     return product
 
-def __get_config_file(url: str) -> dict:
+
+def __get_config(url: str) -> Config:
     no_prefix = url.removeprefix("http://").removeprefix("https://").removeprefix("www.")
     base_url = no_prefix.split("/")[0]
-    file_path = f"price_match/website_configs/{base_url}.json"
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        print(f"Config file for {base_url} not found.")
-        return None
+    return Config.objects.get(pk=base_url)
+
+
+def __extract_floats_from_string(input_string):
+        pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
+        match = re.search(pattern, input_string)
+        if match:
+            return float(match.group().replace(',', ''))
+        
