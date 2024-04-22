@@ -6,8 +6,8 @@ class Product(models.Model):
     price = models.FloatField(default=0)
     ean = models.CharField(max_length=512, null=True, blank=True)
     color = models.CharField(max_length=512, null=True, blank=True)
-    shipping_cost = models.FloatField(default=0)
-    in_stock = models.BooleanField(null=True, blank=True)
+    shipping_price = models.FloatField(default=0)
+    stock_status = models.CharField(max_length=512, null=True, blank=True)
     total_price = models.FloatField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     creation_datetime = models.DateTimeField(auto_now_add=True)
@@ -16,7 +16,7 @@ class Product(models.Model):
 
 
     def save(self, *args, **kwargs):
-        self.total_price = self.price + self.shipping_cost
+        self.total_price = self.price + self.shipping_price
         super(Product, self).save(*args, **kwargs)
 
 
@@ -27,7 +27,8 @@ class Product(models.Model):
             f"Price: {self.price}\n"
             f"EAN: {self.ean}\n"
             f"Color: {self.color}\n"
-            f"Shipping Cost: {self.shipping_cost}\n"
+            f"Shipping Cost: {self.shipping_price}\n"
+            f"In Stock: {self.stock_status}\n"
             f"Total Price: {self.total_price}\n"
             f"Accepted: {self.accepted}\n"
             f"Creation Datetime: {self.creation_datetime}\n"

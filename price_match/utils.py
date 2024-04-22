@@ -77,36 +77,34 @@ def scrape_html_from_website(config: Config, url: str) -> str:
 
 def get_product_from_html(config: Config, html: str, product: Product) -> Product:
     soup = BeautifulSoup(html, "html.parser")
-    try:
-        str_price = soup.select_one(config.price_selector).text
-        product.price = __extract_floats_from_string(str_price)
-    except:
-        pass
-    try:
-        product.name = soup.select_one(config.name_selector).text
-    except:
-        pass
-    try:
+    
+    for field in Product._meta.fields:
+        selector = getattr(config, field.name + '_selector', None)
         
-        product.ean = soup.select_one(config.ean_selector).text
-    except:
-        pass
-    try:
-        product.color = soup.select_one(config.color_selector).text
-    except:
-        pass
-            
-    try:
-        product.in_stock = soup.select_one(config.stock_status_selector).text
-    except:
-        pass
-        
-    try:
-        str_shipping_price = soup.select_one(config.shipping_price_selector).text
-        product.shipping_cost = __extract_floats_from_string(str_shipping_price)
-    except:
-        pass
-
+        if selector:
+            try:
+                if field.name == "stock_status":
+                    selectors = selector.split("¤")
+                    stock_status = ""
+                    
+                    for stock_selector in selectors:
+                        stock_status += soup.select_one(stock_selector).text
+                        stock_status += " "
+                    setattr(product, field.name, stock_status)
+                    continue
+                
+                value = soup.select_one(selector).text
+                
+                if field.get_internal_type() == 'BooleanField':
+                    value = value.lower() in ['true', 'yes', '1']
+                elif field.get_internal_type() == 'FloatField':
+                    value = __extract_floats_from_string(value)
+                
+                setattr(product, field.name, value)
+                
+            except AttributeError:
+                setattr(product, field.name, None)
+                
     print(product)
     return product
 
@@ -118,8 +116,8 @@ def __get_config(url: str) -> Config:
 
 
 def __extract_floats_from_string(input_string):
-        pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
-        match = re.search(pattern, input_string)
-        if match:
-            return float(match.group().replace(',', ''))
-        
+    pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
+    match = re.search(pattern, input_string)
+    if match:
+        return float(match.group().replace(',', ''))
+    
