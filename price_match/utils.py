@@ -1,30 +1,21 @@
-import json
-from price_match.models import Product, Config
-
+import time
+import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
 from selenium.common.exceptions import ElementClickInterceptedException
-import time
-from PIL import Image
-import io
-import re
-from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
+from price_match.models import Product, Config
 
-def with_product(url:str):
+
+def scrape_website(url: str) -> Product:
     product = Product()
     product.url = url
-    scrape_website(product)
-
-
-def scrape_website(product: Product) -> Product:
     config = __get_config(product.url)
-
     page_source = scrape_html_from_website(config, product.url)
     return get_product_from_html(config, page_source, product)
 
@@ -35,27 +26,38 @@ def scrape_html_from_website(config: Config, url: str) -> str:
     chrome_options = Options()
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
     chrome_options.add_argument("--headless")
-    # chrome_options.add_argument('--disable-gpu')
     url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
+
+    __prepare_page_for_scraping(config, driver)
+
+    page_source = driver.page_source
+    driver.quit()
+
+    return page_source
+
+
+def __prepare_page_for_scraping(config: Config, driver: webdriver) -> None:
     try:
         cookie_selector = config.cookie_selector
         cookie_wait = WebDriverWait(driver, 10)
         cookie_accept = cookie_wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{cookie_selector}")))
         cookie_accept.click()
     except:
-        pass
-    
-    slowest_element_selector = config.slowest_element_selector
-    slowest_element_wait = WebDriverWait(driver, 10)
-    slowest_element_wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{slowest_element_selector}")))
-    
-    specifications = config.specification_selector.split("¤")
-    
+        pass # ! Better exception handling
+
+    try:
+        slowest_element_selector = config.slowest_element_selector
+        slowest_element_wait = WebDriverWait(driver, 10)
+        slowest_element_wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f"{slowest_element_selector}")))
+    except:
+        pass # ! Better exception handling
+
+    specifications = config.specification_selector.split("¤") # ! Better options?
+
     for specification in specifications:
         if specification:
-            print(specification)
             specification_element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, specification)))
             for _ in range(3):
                 try:
@@ -63,49 +65,31 @@ def scrape_html_from_website(config: Config, url: str) -> str:
                     break
                 except ElementClickInterceptedException:
                     time.sleep(1)
-    # driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
-    # image_data = driver.get_screenshot_as_png()
-    # image = Image.open(io.BytesIO(image_data))
-    # # Display the image
-    # image.show()
-    
-    page_source = driver.page_source
-    driver.quit()
-
-    return page_source
 
 
 def get_product_from_html(config: Config, html: str, product: Product) -> Product:
     soup = BeautifulSoup(html, "html.parser")
-    
+
     for field in Product._meta.fields:
         selector = getattr(config, field.name + '_selector', None)
-        
+
         if selector:
             try:
-                if field.name == "stock_status":
+                value = ""
+                if "¤" in selector:
                     selectors = selector.split("¤")
-                    stock_status = ""
-                    
-                    for stock_selector in selectors:
-                        stock_status += soup.select_one(stock_selector).text
-                        stock_status += " "
-                    setattr(product, field.name, stock_status)
-                    continue
-                
-                value = soup.select_one(selector).text
-                
-                if field.get_internal_type() == 'BooleanField':
-                    value = value.lower() in ['true', 'yes', '1']
-                elif field.get_internal_type() == 'FloatField':
+                    for selector in selectors:
+                        value += soup.select_one(selector).text
+                        value += " "
+                else:
+                    value = soup.select_one(selector).text
+
+                if field.get_internal_type() == 'FloatField':
                     value = __extract_floats_from_string(value)
-                
                 setattr(product, field.name, value)
-                
+
             except AttributeError:
                 setattr(product, field.name, None)
-                
-    print(product)
     return product
 
 
@@ -115,9 +99,8 @@ def __get_config(url: str) -> Config:
     return Config.objects.get(pk=base_url)
 
 
-def __extract_floats_from_string(input_string):
+def __extract_floats_from_string(input_string: str) -> float:
     pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
     match = re.search(pattern, input_string)
     if match:
-        return float(match.group().replace(',', ''))
-    
+        return float(match.group().replace(',', '')) # ! If no number maybe return whatever string there is?

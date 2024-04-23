@@ -14,11 +14,9 @@ class Product(models.Model):
     acceptance_datetime = models.DateTimeField(null=True, blank=True)
     product_image = models.ImageField(null=True, blank=True)
 
-
     def save(self, *args, **kwargs):
         self.total_price = self.price + self.shipping_price
         super(Product, self).save(*args, **kwargs)
-
 
     def __str__(self):
         return (
@@ -33,6 +31,7 @@ class Product(models.Model):
             f"Accepted: {self.accepted}\n"
             f"Creation Datetime: {self.creation_datetime}\n"
             f"Acceptance Datetime: {self.acceptance_datetime}\n"
+            f"Product Image: {type(self.product_image)}\n"
         )
 
 
