@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
 import time
 import re
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -18,7 +18,6 @@ def scrape_website(url: str) -> Product:
     product.url = url
     
     if not __product_allready_accepted(product.url):
-        
         config = __get_config(product.url)
         page_source = scrape_html_from_website(config, product.url)
         get_product_from_html(config, page_source, product)

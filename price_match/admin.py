@@ -1,6 +1,5 @@
 from django.contrib import admin
-from price_match.models import Product
-from price_match.models import Config
+from price_match.models import Product, Config
 
 class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ["creation_datetime", "total_price"]
