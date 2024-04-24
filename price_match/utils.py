@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import time
 import re
 from selenium import webdriver
@@ -15,9 +16,24 @@ from price_match.models import Product, Config
 def scrape_website(url: str) -> Product:
     product = Product()
     product.url = url
-    config = __get_config(product.url)
-    page_source = scrape_html_from_website(config, product.url)
-    return get_product_from_html(config, page_source, product)
+    
+    if not __product_allready_accepted(product.url):
+        
+        config = __get_config(product.url)
+        page_source = scrape_html_from_website(config, product.url)
+        get_product_from_html(config, page_source, product)
+        product.save()
+        return product
+
+
+def __product_allready_accepted(url: str)-> bool:
+    twenty_four_hours_ago = datetime.now() - timedelta(hours=24)
+
+    try:
+        Product.objects.get(url=url, creation_datetime__gte=twenty_four_hours_ago)
+        return True
+    except Product.DoesNotExist:
+        return False
 
 
 def scrape_html_from_website(config: Config, url: str) -> str:
