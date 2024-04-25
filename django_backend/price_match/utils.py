@@ -1,7 +1,8 @@
 import base64
 import time
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -27,13 +28,9 @@ def scrape_website(url: str) -> Product:
 
 
 def __product_allready_accepted(url: str)-> bool:
-    twenty_four_hours_ago = datetime.now() - timedelta(hours=24)
 
-    try:
-        Product.objects.get(url=url, creation_datetime__gte=twenty_four_hours_ago)
-        return True
-    except Product.DoesNotExist:
-        return False
+    twenty_four_hours_ago = timezone.now() - timedelta(hours=24)
+    return Product.objects.filter(url=url, creation_datetime__gte=twenty_four_hours_ago).exists()
 
 
 def scrape_html_from_website(config: Config, url: str) -> str:
@@ -104,10 +101,8 @@ def get_product_from_html(config: Config, html: str, product: Product, binary_sc
                         value += " "
                 else:
                     value = soup.select_one(selector).text
-
-                if field.get_internal_type() == 'FloatField':
-                    value = __extract_floats_from_string(value)
-
+                if field.name in ["shipping_price","price"]:
+                    value = __extract_numbers_from_string(value)
                 setattr(product, field.name, value)
 
             except AttributeError:
@@ -123,8 +118,9 @@ def __get_config(url: str) -> Config:
     return Config.objects.get(pk=base_url)
 
 
-def __extract_floats_from_string(input_string: str) -> float:
+def __extract_numbers_from_string(input_string: str) -> float:
     pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
     match = re.search(pattern, input_string)
     if match:
-        return float(match.group().replace(',', '')) # ! If no number maybe return whatever string there is?
+        return match.group().replace(',', '')
+    
