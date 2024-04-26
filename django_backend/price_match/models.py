@@ -1,13 +1,13 @@
 from django.db import models
 
 class Product(models.Model):
-    name = models.CharField(max_length=512, null=True, blank=True)
-    url = models.CharField(max_length=512, null=True, blank=True)
-    price = models.CharField(max_length=512, null=True, blank=True, default="Price")
-    ean = models.CharField(max_length=512, null=True, blank=True)
-    color = models.CharField(max_length=512, null=True, blank=True)
-    shipping_price = models.CharField(max_length=512, null=True, blank=True, default="Shipping Price")
-    stock_status = models.CharField(max_length=512, null=True, blank=True)
+    name = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    url = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    ean = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    color = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    shipping_price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    stock_status = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     total_price = models.FloatField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     creation_datetime = models.DateTimeField(auto_now_add=True)
