@@ -1,4 +1,4 @@
-import base64
+from io import BytesIO
 import time
 import re
 from datetime import timedelta
@@ -22,7 +22,6 @@ def scrape_website(url: str) -> Product:
     config = __get_config(product.url)
     page_source, binary_screenshot = scrape_html_from_website(config, product.url)
     get_product_from_html(config, page_source, product, binary_screenshot)
-    
     product.save()
     return product
 
@@ -39,15 +38,16 @@ def scrape_html_from_website(config: Config, url: str) -> str:
     chrome_options = Options()
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
     chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--window-size=1,1")  # Adjust window size here
+    chrome_options.add_argument("--window-size=1500,6000")
     url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
+    
     driver.get(url)
     __prepare_page_for_scraping(config, driver)
     page_source = driver.page_source
-    driver.quit()
     binary_screenshot = __take_screenshot(url,driver)
-    print(binary_screenshot)
+    
+    driver.quit()
     return page_source, binary_screenshot
 
 
@@ -84,7 +84,6 @@ def __prepare_page_for_scraping(config: Config, driver: webdriver.Chrome) -> Non
                     time.sleep(1)
 
 
-
 def get_product_from_html(config: Config, html: str, product: Product, binary_screenshot) -> Product:
     soup = BeautifulSoup(html, "html.parser")
 
@@ -107,8 +106,7 @@ def get_product_from_html(config: Config, html: str, product: Product, binary_sc
 
             except AttributeError:
                 setattr(product, field.name, None)
-    # product.product_image = binary_screenshot
-    # print(binary_screenshot)
+    product.product_image = binary_screenshot
     return product
 
 
