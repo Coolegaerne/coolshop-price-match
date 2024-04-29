@@ -1,4 +1,3 @@
-from io import BytesIO
 import time
 import re
 from datetime import timedelta
@@ -11,7 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import ElementClickInterceptedException
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+
 from price_match.models import Product, Config
+
 
 product_image = None
 def scrape_website(url: str) -> Product:
