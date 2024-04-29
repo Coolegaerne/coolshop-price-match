@@ -22,6 +22,7 @@ def scrape_website(url: str) -> Product:
     config = __get_config(product.url)
     page_source, binary_screenshot = scrape_html_from_website(config, product.url)
     get_product_from_html(config, page_source, product, binary_screenshot)
+
     product.save()
     return product
 
