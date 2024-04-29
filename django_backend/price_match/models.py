@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Product(models.Model):
     name = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     url = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
@@ -12,7 +13,8 @@ class Product(models.Model):
     accepted = models.BooleanField(default=False)
     creation_datetime = models.DateTimeField(auto_now_add=True)
     acceptance_datetime = models.DateTimeField(null=True, blank=True)
-    product_image = models.ImageField(null=True, blank=True)
+    product_image = models.BinaryField(null=True, blank=True)
+
 
     def save(self, *args, **kwargs):
         try:
@@ -20,6 +22,7 @@ class Product(models.Model):
         except:
             self.total_price = None
         super(Product, self).save(*args, **kwargs)
+
 
     def __str__(self):
         return (

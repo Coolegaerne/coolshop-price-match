@@ -14,14 +14,16 @@ from urllib.parse import urlparse
 from price_match.models import Product, Config
 
 
+product_image = None
 def scrape_website(url: str) -> Product:
     product = Product()
     product.url = url
-    
-    # if not __product_allready_accepted(product.url):
+
+    #if not __product_allready_accepted(product.url):
     config = __get_config(product.url)
-    page_source = scrape_html_from_website(config, product.url)
-    get_product_from_html(config, page_source, product)
+    page_source, binary_screenshot = scrape_html_from_website(config, product.url)
+    get_product_from_html(config, page_source, product, binary_screenshot)
+
     product.save()
     return product
 
@@ -38,19 +40,24 @@ def scrape_html_from_website(config: Config, url: str) -> str:
     chrome_options = Options()
     chrome_options.add_argument(f"--user-agent={my_user_agent}")
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--window-size=1500,6000")
     url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
+    
     driver.get(url)
-
     __prepare_page_for_scraping(config, driver)
-
     page_source = driver.page_source
+    binary_screenshot = __take_screenshot(url,driver)
+    
     driver.quit()
+    return page_source, binary_screenshot
 
-    return page_source
+
+def __take_screenshot(url:str, driver:webdriver.Chrome):
+    return driver.get_screenshot_as_png()
 
 
-def __prepare_page_for_scraping(config: Config, driver: webdriver) -> None:
+def __prepare_page_for_scraping(config: Config, driver: webdriver.Chrome) -> None:
     try:
         cookie_selector = config.cookie_selector
         cookie_wait = WebDriverWait(driver, 10)
@@ -79,7 +86,7 @@ def __prepare_page_for_scraping(config: Config, driver: webdriver) -> None:
                     time.sleep(1)
 
 
-def get_product_from_html(config: Config, html: str, product: Product) -> Product:
+def get_product_from_html(config: Config, html: str, product: Product, binary_screenshot) -> Product:
     soup = BeautifulSoup(html, "html.parser")
 
     for field in Product._meta.fields:
@@ -101,6 +108,7 @@ def get_product_from_html(config: Config, html: str, product: Product) -> Produc
 
             except AttributeError:
                 setattr(product, field.name, None)
+    product.product_image = binary_screenshot
     return product
 
 
