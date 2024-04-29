@@ -1,10 +1,11 @@
 from base64 import b64encode
 from django.contrib import admin
-from price_match.models import Product, Config
 from django.utils.safestring import mark_safe
 
+from price_match.models import PriceMatch, Config
 
-class ProductAdmin(admin.ModelAdmin):
+
+class PriceMatchAdmin(admin.ModelAdmin):
     readonly_fields = ["creation_datetime", "total_price", "display_product_image"]
     list_display = ["name", "url", "creation_datetime"]
 
@@ -21,5 +22,5 @@ class ConfigAdmin(admin.ModelAdmin):
     list_display = ["base_url"]
 
 
-admin.site.register(Product, ProductAdmin)
+admin.site.register(PriceMatch, PriceMatchAdmin)
 admin.site.register(Config, ConfigAdmin)

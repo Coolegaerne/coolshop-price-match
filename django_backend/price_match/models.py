@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Product(models.Model):
+class PriceMatch(models.Model):
     name = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     url = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
@@ -14,6 +14,8 @@ class Product(models.Model):
     creation_datetime = models.DateTimeField(auto_now_add=True)
     acceptance_datetime = models.DateTimeField(null=True, blank=True)
     product_image = models.BinaryField(null=True, blank=True)
+    postal_code = models.CharField(max_length=512, null=True, blank=True)
+    email = models.EmailField(max_length=512, null=True, blank=True)
 
 
     def save(self, *args, **kwargs):
@@ -21,7 +23,7 @@ class Product(models.Model):
             self.total_price = float(self.price) + float(self.shipping_price)
         except:
             self.total_price = None
-        super(Product, self).save(*args, **kwargs)
+        super(PriceMatch, self).save(*args, **kwargs)
 
 
     def __str__(self):
@@ -37,7 +39,10 @@ class Product(models.Model):
             f"Accepted: {self.accepted}\n"
             f"Creation Datetime: {self.creation_datetime}\n"
             f"Acceptance Datetime: {self.acceptance_datetime}\n"
+            f"Postal Code: {self.postal_code}\n"
+            f"Email: {self.email}\n"
             f"Product Image: {type(self.product_image)}\n"
+            
         )
 
 
