@@ -1,7 +1,10 @@
+import React from 'react';
+import Form from './components/Form';
+
 function App() {
   return (
     <div>
-      <p>Hello world</p>
+      <Form />
     </div>
   );
 }
