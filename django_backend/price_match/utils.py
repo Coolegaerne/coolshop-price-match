@@ -11,27 +11,27 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-from price_match.models import Product, Config
+from price_match.models import PriceMatch, Config
 
 
-product_image = None
-def scrape_website(url: str) -> Product:
-    product = Product()
-    product.url = url
+def scrape_website(url: str, postal_code: str, email:str) -> str:
+    price_match = PriceMatch()
+    price_match.url = url
+    price_match.postal_code = postal_code
+    price_match.email = email
+    if __product_already_accepted(price_match.url):
+        return "Product already accepted. Here is the link"
+    else:
+        config = __get_config(price_match.url)
+        page_source, binary_screenshot = scrape_html_from_website(config, price_match.url)
+        get_product_from_html(config, page_source, price_match, binary_screenshot)
+        price_match.save()
+        return f"Thank you, now wait for the acceptance email. {price_match.name}"
 
-    #if not __product_allready_accepted(product.url):
-    config = __get_config(product.url)
-    page_source, binary_screenshot = scrape_html_from_website(config, product.url)
-    get_product_from_html(config, page_source, product, binary_screenshot)
 
-    product.save()
-    return product
-
-
-def __product_allready_accepted(url: str)-> bool:
-
+def __product_already_accepted(url: str)-> bool:
     twenty_four_hours_ago = timezone.now() - timedelta(hours=24)
-    return Product.objects.filter(url=url, creation_datetime__gte=twenty_four_hours_ago).exists()
+    return PriceMatch.objects.filter(url=url, creation_datetime__gte=twenty_four_hours_ago).exists()
 
 
 def scrape_html_from_website(config: Config, url: str) -> str:
@@ -86,10 +86,10 @@ def __prepare_page_for_scraping(config: Config, driver: webdriver.Chrome) -> Non
                     time.sleep(1)
 
 
-def get_product_from_html(config: Config, html: str, product: Product, binary_screenshot) -> Product:
+def get_product_from_html(config: Config, html: str, price_match: PriceMatch, binary_screenshot) -> PriceMatch:
     soup = BeautifulSoup(html, "html.parser")
 
-    for field in Product._meta.fields:
+    for field in PriceMatch._meta.fields:
         selector = getattr(config, field.name + '_selector', None)
 
         if selector:
@@ -104,12 +104,12 @@ def get_product_from_html(config: Config, html: str, product: Product, binary_sc
                     value = soup.select_one(selector).text
                 if field.name in ["shipping_price","price"]:
                     value = __extract_numbers_from_string(value)
-                setattr(product, field.name, value)
+                setattr(price_match, field.name, value)
 
             except AttributeError:
-                setattr(product, field.name, None)
-    product.product_image = binary_screenshot
-    return product
+                setattr(price_match, field.name, None)
+    price_match.product_image = binary_screenshot
+    return price_match
 
 
 def __get_config(url: str) -> Config:
