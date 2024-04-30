@@ -13,20 +13,19 @@ from urllib.parse import urlparse
 
 from price_match.models import PriceMatch, Config
 
-#, postal_code: str, email:str
-def scrape_website(url: str) -> str:
+
+def scrape_website(url: str, postal_code: str, email:str) -> str:
     price_match = PriceMatch()
     price_match.url = url
-    # price_match.postal_code = postal_code
-    # price_match.email = email
-    # if __product_already_accepted(price_match.url):
-    #     return "Product already accepted. Here is the link"
-    # else:
-    config = __get_config(price_match.url)
-    page_source, binary_screenshot = scrape_html_from_website(config, price_match.url)
-    get_product_from_html(config, page_source, price_match, binary_screenshot)
-    price_match.save()
-    return price_match
+    price_match.postal_code = postal_code
+    price_match.email = email
+    if __product_already_accepted(price_match.url):
+        return "Product already accepted. Here is the link"
+    else:
+        config = __get_config(price_match.url)
+        page_source, binary_screenshot = scrape_html_from_website(config, price_match.url)
+        get_product_from_html(config, page_source, price_match, binary_screenshot)
+        price_match.save()
     return f"Thank you, now wait for the acceptance email. {price_match.name}"
 
 
