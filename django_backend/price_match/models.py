@@ -42,7 +42,6 @@ class PriceMatch(models.Model):
             f"Postal Code: {self.postal_code}\n"
             f"Email: {self.email}\n"
             f"Product Image: {type(self.product_image)}\n"
-            
         )
 
 

@@ -9,5 +9,5 @@ def scrape(request):
     postal_code = request.data.get("postal_code", "")
     email = request.data.get("email", "")
     
-    message = scrape_website(url,postal_code, email)
+    message = scrape_website(url, postal_code, email)
     return Response(message)
