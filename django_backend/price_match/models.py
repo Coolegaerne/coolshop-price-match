@@ -7,8 +7,12 @@ class PriceMatch(models.Model):
     price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     ean = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     color = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
-    shipping_price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
-    stock_status = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
+    shipping_price = models.CharField(
+        max_length=512, null=True, blank=True, default="Not Found"
+    )
+    stock_status = models.CharField(
+        max_length=512, null=True, blank=True, default="Not Found"
+    )
     total_price = models.FloatField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     creation_datetime = models.DateTimeField(auto_now_add=True)
@@ -17,14 +21,12 @@ class PriceMatch(models.Model):
     postal_code = models.CharField(max_length=512, null=True, blank=True)
     email = models.EmailField(max_length=512, null=True, blank=True)
 
-
     def save(self, *args, **kwargs):
         try:
             self.total_price = float(self.price) + float(self.shipping_price)
         except:
             self.total_price = None
         super(PriceMatch, self).save(*args, **kwargs)
-
 
     def __str__(self):
         return (
@@ -46,7 +48,9 @@ class PriceMatch(models.Model):
 
 
 class Config(models.Model):
-    base_url = models.CharField(max_length=512, blank=False, null=False, primary_key=True)
+    base_url = models.CharField(
+        max_length=512, blank=False, null=False, primary_key=True
+    )
     slowest_element_selector = models.CharField(max_length=512, blank=True)
     cookie_selector = models.CharField(max_length=512, blank=True)
     specification_selector = models.CharField(max_length=512, blank=True)
