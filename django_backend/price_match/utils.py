@@ -26,7 +26,7 @@ def scrape_website(url: str, postal_code: str, email:str) -> str:
         page_source, binary_screenshot = scrape_html_from_website(config, price_match.url)
         get_product_from_html(config, page_source, price_match, binary_screenshot)
         price_match.save()
-    return f"Thank you, now wait for the acceptance email. {price_match.name}"
+        return f"Thank you, now wait for the acceptance email. {price_match.name}"
 
 
 def __product_already_accepted(url: str)-> bool:
