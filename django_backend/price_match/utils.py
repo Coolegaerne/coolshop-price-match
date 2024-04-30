@@ -91,18 +91,21 @@ def get_product_from_html(config: Config, html: str, price_match: PriceMatch, bi
     soup = BeautifulSoup(html, "html.parser")
 
     for field in PriceMatch._meta.fields:
-        selector = getattr(config, field.name + '_selector', None)
+        selector_text = getattr(config, field.name + '_selector', None)
 
-        if selector:
+        if selector_text:
             try:
                 value = ""
-                if "¤" in selector:
-                    selectors = selector.split("¤")
+                if "¤" in selector_text:
+                    selectors = selector_text.split("¤")
                     for selector in selectors:
-                        value += soup.select_one(selector).text
+                        try:
+                            value += str.strip(soup.select_one(selector).text)
+                        except:
+                            pass
                         value += " "
                 else:
-                    value = str.strip(soup.select_one(selector).text)
+                    value = str.strip(soup.select_one(selector_text).text)
                 if field.name in ["shipping_price","price"]:
                     value = __extract_numbers_from_string(value)
                 setattr(price_match, field.name, value)
