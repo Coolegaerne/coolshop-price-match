@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  django:
+    build:
+      context: ./django_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./django_backend:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - frontend
+
+  frontend:
+    build:
+      context: ./react_frontend
+    command: npm run start
+    volumes:
+      - ./react_frontend:/app
+    ports:
+      - "3000:3000"
