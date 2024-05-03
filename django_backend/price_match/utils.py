@@ -104,19 +104,22 @@ def get_product_from_html(
     soup = BeautifulSoup(html, "html.parser")
 
     for field in PriceMatch._meta.fields:
-        selector = getattr(config, field.name + "_selector", None)
+        selector_text = getattr(config, field.name + '_selector', None)
 
-        if selector:
+        if selector_text:
             try:
                 value = ""
-                if "¤" in selector:
-                    selectors = selector.split("¤")
+                if "¤" in selector_text:
+                    selectors = selector_text.split("¤")
                     for selector in selectors:
-                        value += soup.select_one(selector).text
+                        try:
+                            value += str.strip(soup.select_one(selector).text)
+                        except:
+                            pass
                         value += " "
                 else:
-                    value = soup.select_one(selector).text
-                if field.name in ["shipping_price", "price"]:
+                    value = str.strip(soup.select_one(selector_text).text)
+                if field.name in ["shipping_price","price"]:
                     value = __extract_numbers_from_string(value)
                 setattr(price_match, field.name, value)
 
@@ -134,8 +137,11 @@ def __get_config(url: str) -> Config:
     return Config.objects.get(pk=base_url)
 
 
-def __extract_numbers_from_string(input_string: str) -> float:
+def __extract_numbers_from_string(input_string: str) -> str:
     pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
     match = re.search(pattern, input_string)
     if match:
-        return match.group().replace(",", "")
+        return match.group().replace(',', '')
+    else:
+        return input_string
+
