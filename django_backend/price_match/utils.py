@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from django.utils import timezone
-from price_match.models import Config, PriceMatch
+from price_match.models import Config, PriceMatch, StatusMessages
 from selenium import webdriver
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.chrome.options import Options
@@ -14,13 +14,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-def scrape_website(url: str, postal_code: str, email: str) -> str:
+def scrape_website(url: str, postal_code: str, email: str) -> StatusMessages:
     price_match = PriceMatch()
     price_match.url = url
     price_match.postal_code = postal_code
     price_match.email = email
     if __product_already_accepted(price_match.url):
-        return "Product already accepted. Here is the link"
+        return StatusMessages.ALREADY_EXIST
     else:
         config = __get_config(price_match.url)
         page_source, binary_screenshot = scrape_html_from_website(
@@ -28,7 +28,7 @@ def scrape_website(url: str, postal_code: str, email: str) -> str:
         )
         get_product_from_html(config, page_source, price_match, binary_screenshot)
         price_match.save()
-        return f"Thank you, now wait for the acceptance email. {price_match.name}"
+        return StatusMessages.SUCCESS
 
 
 def __product_already_accepted(url: str) -> bool:
@@ -47,7 +47,7 @@ def scrape_html_from_website(config: Config, url: str) -> str:
     chrome_options.add_argument("--window-size=1500,6000")
     url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
-
+    
     driver.get(url)
     __prepare_page_for_scraping(config, driver)
     page_source = driver.page_source
