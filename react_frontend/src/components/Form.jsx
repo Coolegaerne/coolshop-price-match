@@ -17,7 +17,7 @@ const Form = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setButtonDisabled(true); // Disable the button during submission
+        setButtonDisabled(true);
 
         try {
             const response = await fetch('http://127.0.0.1:8000/scrape/', {
@@ -35,7 +35,7 @@ const Form = () => {
                         window.location.href = "/success";
                         break;
                     case 'ALREADY_EXIST':
-                        // Redirect to already exist view and pass the message
+
                         window.location.href = `/already_exist?message=${response_data.message}`;
                         break;
                     default:
@@ -47,7 +47,7 @@ const Form = () => {
         } catch (error) {
             window.location.href = "/error";
         } finally {
-            setButtonDisabled(false); // Re-enable the button after submission
+            setButtonDisabled(false);
         }
     };
 
