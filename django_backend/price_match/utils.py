@@ -47,7 +47,7 @@ def scrape_html_from_website(config: Config, url: str) -> str:
     chrome_options.add_argument("--window-size=1500,6000")
     url = urlparse(url=url, scheme="https").geturl()
     driver = webdriver.Chrome(options=chrome_options)
-    
+
     driver.get(url)
     __prepare_page_for_scraping(config, driver)
     page_source = driver.page_source
@@ -104,7 +104,7 @@ def get_product_from_html(
     soup = BeautifulSoup(html, "html.parser")
 
     for field in PriceMatch._meta.fields:
-        selector_text = getattr(config, field.name + '_selector', None)
+        selector_text = getattr(config, field.name + "_selector", None)
 
         if selector_text:
             try:
@@ -119,7 +119,7 @@ def get_product_from_html(
                         value += " "
                 else:
                     value = str.strip(soup.select_one(selector_text).text)
-                if field.name in ["shipping_price","price"]:
+                if field.name in ["shipping_price", "price"]:
                     value = __extract_numbers_from_string(value)
                 setattr(price_match, field.name, value)
 
@@ -141,7 +141,6 @@ def __extract_numbers_from_string(input_string: str) -> str:
     pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
     match = re.search(pattern, input_string)
     if match:
-        return match.group().replace(',', '')
+        return match.group().replace(",", "")
     else:
         return input_string
-

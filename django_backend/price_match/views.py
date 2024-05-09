@@ -1,7 +1,8 @@
+from price_match.models import StatusMessages
 from price_match.utils import scrape_website
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from price_match.models import StatusMessages
+
 
 @api_view(["POST"])
 def scrape(request):

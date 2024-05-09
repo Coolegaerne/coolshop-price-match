@@ -62,16 +62,8 @@ class Config(models.Model):
     shipping_price_selector = models.CharField(max_length=512, blank=True)
     currency = models.CharField(max_length=512, blank=True)
 
+
 class StatusMessages:
-    ALREADY_EXIST = {
-        'status': 'SUCCESS',
-        'message': 'ALREADY_EXIST'
-    }
-    SUCCESS = {
-        'status': 'SUCCESS',
-        'message': 'SUCCESS'
-    }
-    ERROR = {
-        'status': 'ERROR',
-        'message': 'ERROR'
-    }
+    ALREADY_EXIST = {"status": "SUCCESS", "message": "ALREADY_EXIST"}
+    SUCCESS = {"status": "SUCCESS", "message": "SUCCESS"}
+    ERROR = {"status": "ERROR", "message": "ERROR"}
