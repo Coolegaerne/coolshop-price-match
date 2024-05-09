@@ -147,6 +147,7 @@ def __extract_numbers_from_string(input_string: str) -> str:
     else:
         return input_string
 
+
 def __find_ean_in_string(input_string: str) -> str:
     pattern = r"\b\d{13}\b"
     match = re.search(pattern, input_string)
