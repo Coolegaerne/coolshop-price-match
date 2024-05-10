@@ -16,6 +16,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 def scrape_website(url: str, postal_code: str, email: str) -> StatusMessages:
     price_match = PriceMatch()
+    url = url.split("#")[0]
     price_match.url = url
     price_match.postal_code = postal_code
     price_match.email = email
@@ -126,6 +127,7 @@ def get_product_from_html(
             except AttributeError:
                 setattr(price_match, field.name, None)
     price_match.product_image = binary_screenshot
+    price_match.ean = __find_ean_in_string(html)
     return price_match
 
 
@@ -144,3 +146,12 @@ def __extract_numbers_from_string(input_string: str) -> str:
         return match.group().replace(",", "")
     else:
         return input_string
+
+
+def __find_ean_in_string(input_string: str) -> str:
+    pattern = r"\b\d{13}\b"
+    match = re.search(pattern, input_string)
+    if match:
+        return match.group()
+    else:
+        return None

@@ -6,7 +6,6 @@ class PriceMatch(models.Model):
     url = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     price = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     ean = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
-    color = models.CharField(max_length=512, null=True, blank=True, default="Not Found")
     shipping_price = models.CharField(
         max_length=512, null=True, blank=True, default="Not Found"
     )
@@ -34,7 +33,6 @@ class PriceMatch(models.Model):
             f"URL: {self.url}\n"
             f"Price: {self.price}\n"
             f"EAN: {self.ean}\n"
-            f"Color: {self.color}\n"
             f"Shipping Cost: {self.shipping_price}\n"
             f"In Stock: {self.stock_status}\n"
             f"Total Price: {self.total_price}\n"
@@ -56,8 +54,6 @@ class Config(models.Model):
     specification_selector = models.CharField(max_length=512, blank=True)
     price_selector = models.CharField(max_length=512, blank=True)
     name_selector = models.CharField(max_length=512, blank=True)
-    ean_selector = models.CharField(max_length=512, blank=True)
-    color_selector = models.CharField(max_length=512, blank=True)
     stock_status_selector = models.CharField(max_length=512, blank=True)
     shipping_price_selector = models.CharField(max_length=512, blank=True)
     currency = models.CharField(max_length=512, blank=True)
