@@ -3,7 +3,7 @@ import PriceMatchTable from './components/PriceMatchTable';
 import './index.css';
 
 const mockData = [
-  { 
+  {
     name: 'Product 1',
     url: 'https://example.com/product1',
     price: '100',
@@ -18,7 +18,7 @@ const mockData = [
     postal_code: '12345',
     email: 'example@example.com'
   },
-  { 
+  {
     name: 'Product 2',
     url: 'https://example.com/product2',
     price: '150',
@@ -26,7 +26,7 @@ const mockData = [
     shipping_price: '15',
     stock_status: 'Out of Stock',
     total_price: 165,
-    accepted: false,  
+    accepted: false,
     creation_datetime: '2024-05-03',
     acceptance_datetime: null,
     product_image: '', // You can add image data here if needed

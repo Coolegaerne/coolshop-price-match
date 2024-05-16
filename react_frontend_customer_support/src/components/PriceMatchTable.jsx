@@ -48,8 +48,8 @@ const PriceMatchTable = ({ data }) => {
               <td className="p-4">{item.url}</td>
               <td className="p-4">{item.accepted ? 'Accepted' : 'Not Accepted'}</td>
               <td className="p-4">
-                <button 
-                  onClick={() => setSelectedItem(item)} 
+                <button
+                  onClick={() => setSelectedItem(item)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded center"
                 >
                   Details
@@ -67,4 +67,3 @@ const PriceMatchTable = ({ data }) => {
 };
 
 export default PriceMatchTable;
-
