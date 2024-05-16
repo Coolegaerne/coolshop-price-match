@@ -23,11 +23,14 @@ def scrape_website(url: str, postal_code: str, email: str) -> StatusMessages:
     if __product_already_accepted(price_match.url):
         return StatusMessages.ALREADY_EXIST
     else:
-        config = __get_config(price_match.url)
-        page_source, binary_screenshot = scrape_html_from_website(
-            config, price_match.url
-        )
-        get_product_from_html(config, page_source, price_match, binary_screenshot)
+        try:
+            config = __get_config(price_match.url)
+            page_source, binary_screenshot = scrape_html_from_website(
+                config, price_match.url
+            )
+            get_product_from_html(config, page_source, price_match, binary_screenshot)
+        except Config.DoesNotExist:
+            pass
         price_match.save()
         return StatusMessages.SUCCESS
 
