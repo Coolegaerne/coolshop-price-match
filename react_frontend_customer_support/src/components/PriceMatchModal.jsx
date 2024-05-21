@@ -19,8 +19,6 @@ const PriceMatchModal = ({ item, onClose }) => {
     };
 
     const handleSaveAndClose = () => {
-
-        // Close modal
         onClose();
     };
 
