@@ -21,15 +21,37 @@ const PriceMatchModal = ({ item, onClose, onSave }) => {
 
   const handleSaveAndClose = async () => {
     try {
-      // Merge the changes with the original item
       const updatedItem = { ...item, ...editedItem };
-      await updateItem(updatedItem); // Send the updated item
-      onSave(updatedItem); // Pass the updated item back to the parent
+      await updateItem(updatedItem);
+      onSave(updatedItem);
       onClose();
     } catch (error) {
       console.error('Failed to update item:', error);
     }
   };
+
+  const handleCloseWithoutSave = async () => {
+    try {
+      onClose();
+    }
+    catch (error) {
+      console.error('Failed to close modal:', error);
+    }
+  }
+
+  const openProductPageImage = async (productPage) => {
+    try {
+      var string = (`data:image/png;base64,${productPage}`);
+      var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>"
+      var image = window.open();
+      image.document.open();
+      image.document.write(iframe);
+      image.document.close();
+    }
+    catch (error) {
+      console.error('Failed to open product page image:', error);
+    }
+  }
 
   const fields = [
     { label: 'Navn', key: 'name' },
@@ -44,16 +66,22 @@ const PriceMatchModal = ({ item, onClose, onSave }) => {
     { label: 'Accepteringsdato', key: 'acceptance_datetime' },
     { label: 'Postnummer', key: 'postal_code' },
     { label: 'Email', key: 'email' },
+    { label: 'Product page', key: 'product_image'},
   ];
 
   return (
     <div className="fixed inset-0 flex items-center bg-gray-600 bg-opacity-50 z-50">
-      <div className="bg-white p-8 px-20 max-w-screen-xl mx-auto rounded shadow-lg">
-        <div className="overflow-auto max-h-full">
-          {fields.map((field, index) => (
-            <div className="mb-4 flex items-center justify-between" key={index}>
-              <label className="block mb-1 font-bold">{field.label}:&emsp;</label>
+      <div className="bg-white p-8 px-20 max-w-screen-xl mx-auto rounded shadow-lg max-h-screen overflow-y-scroll">
+        {fields.map((field, index) => (
+          <div className="mb-4 flex items-center justify-between" key={index}>
+            <label className="block mb-1 font-bold">{field.label}:&emsp;</label>
 
+            {field.label === 'Product page' ? (
+              <img src={`data:image/png;base64,${editedItem[field.key]}`} alt="" />,
+              <button onClick={() => openProductPageImage(editedItem[field.key])} className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-white rounded">
+                View product page
+              </button>
+            ) : (
               <div className="flex items-center">
                 <input
                   type="text"
@@ -68,23 +96,22 @@ const PriceMatchModal = ({ item, onClose, onSave }) => {
 
                 {copyStatus[field.label] && <span className="ml-2 text-green-500">Copied!</span>}
               </div>
-            </div>
-          ))}
-
-          <hr className="my-4" />
-
-          <div className="mb-4">
-            <label className="block mb-1 font-bold">Accepteret</label>
-            <div className="flex items-center space-x-2">
-              <button onClick={() => handleAcceptToggle(true)} className="p-2 bg-green-500 text-white rounded">✔️</button>
-              <button onClick={() => handleAcceptToggle(false)} className="p-2 bg-red-500 text-white rounded">❌</button>
-            </div>
+            )}
           </div>
+        ))}
+
+        <hr className="my-4" />
+        <label className="block mb-1 font-bold">Accepter</label>
+        <div className="flex gap-2">
+          <button onClick={() => handleAcceptToggle(true)} className="p-2 bg-green-500 text-white rounded hover:bg-green-600 active:bg-green-400 w-full">Accept</button>
+          <button onClick={() => handleAcceptToggle(false)} className="p-2 bg-red-500 text-white rounded hover:bg-red-600 active:bg-red-400 w-full">Deny</button>
         </div>
 
-        <button onClick={handleSaveAndClose} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-          Save and Close
-        </button>
+        <hr className="my-4" />
+        <div className='flex gap-2'>
+          <button onClick={handleSaveAndClose} className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-white rounded w-full">Save and Close</button>
+          <button onClick={handleCloseWithoutSave} className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-white rounded w-full">Exit without saving</button>
+        </div>
       </div>
     </div>
   );
