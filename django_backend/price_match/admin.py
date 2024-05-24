@@ -6,8 +6,13 @@ from price_match.models import Config, PriceMatch
 
 
 class PriceMatchAdmin(admin.ModelAdmin):
-    readonly_fields = ["creation_datetime", "total_price", "display_product_image"]
-    list_display = ["name", "url", "creation_datetime"]
+    readonly_fields = [
+        "creation_datetime",
+        "total_price",
+        "display_product_image",
+        "pk",
+    ]
+    list_display = ["pk", "name", "url", "creation_datetime"]
 
     def display_product_image(self, obj):
         if obj.product_image:

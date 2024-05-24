@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PriceMatchModal from './PriceMatchModal';
 
-const PriceMatchTable = ({ data }) => {
+const PriceMatchTable = ({ data, onSave }) => {
   const [sortConfig, setSortConfig] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -20,11 +20,7 @@ const PriceMatchTable = ({ data }) => {
 
   const requestSort = key => {
     let direction = 'ascending';
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
@@ -60,7 +56,7 @@ const PriceMatchTable = ({ data }) => {
         </tbody>
       </table>
       {selectedItem && (
-        <PriceMatchModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+        <PriceMatchModal item={selectedItem} onClose={() => setSelectedItem(null)} onSave={onSave} />
       )}
     </div>
   );
