@@ -4,11 +4,12 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from price_match.models import PriceMatch, StatusMessages
+from price_match.serializers import PriceMatchSerializer
 from price_match.utils import scrape_website
+from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from price_match.serializers import PriceMatchSerializer
-from rest_framework import generics
+
 
 @api_view(["POST"])
 def scrape(request):
@@ -26,9 +27,11 @@ class PriceMatchListCreate(generics.ListCreateAPIView):
     queryset = PriceMatch.objects.all()
     serializer_class = PriceMatchSerializer
 
+
 class PriceMatchRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = PriceMatch.objects.all()
     serializer_class = PriceMatchSerializer
+
 
 # class PriceMatchList(View):
 #     def get(self, request):

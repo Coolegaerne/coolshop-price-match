@@ -9,7 +9,7 @@ export const fetchData = async () => {
       throw error;
     }
   };
-  
+
   export const updateItem = async (id,updatedItem) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/pricematches/${id}/`, {
