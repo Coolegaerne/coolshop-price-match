@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { updateItem } from '../utils';
 
 const PriceMatchModal = ({ item, onClose, onSave }) => {
   const [copyStatus, setCopyStatus] = useState({});
   const [editedItem, setEditedItem] = useState(item);
+
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        handleCloseWithoutSave();
+      }
+    };
+
+    document.addEventListener('keydown', handleEsc);
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   const handleCopy = (field) => {
     setCopyStatus({ ...copyStatus, [field]: true });
@@ -22,7 +36,8 @@ const PriceMatchModal = ({ item, onClose, onSave }) => {
   const handleSaveAndClose = async () => {
     try {
       const updatedItem = { ...item, ...editedItem };
-      await updateItem(updatedItem);
+      const id = item.id;
+      await updateItem(id, updatedItem);
       onSave(updatedItem);
       onClose();
     } catch (error) {

@@ -10,9 +10,9 @@ export const fetchData = async () => {
     }
   };
   
-  export const updateItem = async (updatedItem) => {
+  export const updateItem = async (id,updatedItem) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/pricematches/`, {
+      const response = await fetch(`http://127.0.0.1:8000/pricematches/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -22,9 +22,7 @@ export const fetchData = async () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const responseData = await response.text();
-      console.log('Response:', responseData); // Log the response data
-      return responseData; // Return plain text response
+      await response.text();
     } catch (error) {
       throw error;
     }
