@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from price_match.views import (PriceMatchListCreate,
                                PriceMatchRetrieveUpdateDestroy, scrape)
 
-# PriceMatchList,
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("scrape/", scrape),
