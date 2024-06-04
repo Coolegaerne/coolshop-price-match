@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PriceMatchTable from './components/PriceMatchTable';
 import './index.css';
-import { fetchData } from './utils'; // Ensure this function fetches all data from your API
+import { fetchData } from './utils';
 
 function App() {
   const [data, setData] = useState([]);
@@ -16,7 +16,9 @@ function App() {
   }, []);
 
   const handleSave = (updatedItem) => {
-    setData(prevData => prevData.map(item => item.pk === updatedItem.pk ? updatedItem : item));
+    setData(prevData => {
+      return prevData.map(item => item.id === updatedItem.id ? updatedItem : item);
+    });
   };
 
   const filteredData = data.filter(item =>
