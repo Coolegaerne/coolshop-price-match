@@ -124,13 +124,13 @@ def get_product_from_html(
                 else:
                     value = str.strip(soup.select_one(selector_text).text)
                 if field.name in ["shipping_price", "price"]:
-                    value = __extract_numbers_from_string(value)
+                    value = extract_numbers_from_string(value)
                 setattr(price_match, field.name, value)
 
             except AttributeError:
                 setattr(price_match, field.name, None)
     price_match.product_image = binary_screenshot
-    price_match.ean = __find_ean_in_string(html)
+    price_match.ean = find_ean_in_string(html)
     return price_match
 
 
@@ -142,7 +142,7 @@ def __get_config(url: str) -> Config:
     return Config.objects.get(pk=base_url)
 
 
-def __extract_numbers_from_string(input_string: str) -> str:
+def extract_numbers_from_string(input_string: str) -> str:
     pattern = r"[-+]?\d{1,3}(?:,\d{3})*\.\d+|\d+"
     match = re.search(pattern, input_string)
     if match:
@@ -151,7 +151,7 @@ def __extract_numbers_from_string(input_string: str) -> str:
         return input_string
 
 
-def __find_ean_in_string(input_string: str) -> str:
+def find_ean_in_string(input_string: str) -> str:
     pattern = r"\b\d{13}\b"
     match = re.search(pattern, input_string)
     if match:
