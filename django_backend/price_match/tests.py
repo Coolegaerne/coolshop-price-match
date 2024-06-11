@@ -1,37 +1,45 @@
-from django.test import TestCase
-from .utils import find_ean_in_string, extract_numbers_from_string, get_product_from_html
-from parameterized import parameterized
 from unittest.mock import MagicMock
+
+from django.test import TestCase
+from parameterized import parameterized
+
+from .utils import (extract_numbers_from_string, find_ean_in_string,
+                    get_product_from_html)
 
 
 class EANTestCases(TestCase):
-    #Arrange
-    @parameterized.expand([
-        ("This input string contains a valid EAN: 5594962001960.", "5594962001960"),
-        ("This string does not contain a valid EAN.", None),
-        ("Test text 5594962001960 and some text", "5594962001960"),
-        ("find First EAN 5323296204450 and second EAN 9876543210987.","5323296204450"),
-        ("Invalid EAN: 12345abcde678 fafsfasf.", None)
-    ]) 
-
+    # Arrange
+    @parameterized.expand(
+        [
+            ("This input string contains a valid EAN: 5594962001960.", "5594962001960"),
+            ("This string does not contain a valid EAN.", None),
+            ("Test text 5594962001960 and some text", "5594962001960"),
+            (
+                "find First EAN 5323296204450 and second EAN 9876543210987.",
+                "5323296204450",
+            ),
+            ("Invalid EAN: 12345abcde678 fafsfasf.", None),
+        ]
+    )
     def test_find_ean_in_string(self, input_string, expected_output):
-        #Act
+        # Act
         result = find_ean_in_string(input_string)
-        #Assert
+        # Assert
         self.assertEqual(result, expected_output)
 
 
 class ExtractPriceFromStringTestCases(TestCase):
-    #Arrange
-    @parameterized.expand([
-        ("The price is 2,234.56 kr.", "2234.56"),
-        ("No numbers here", "No numbers here")
-    ])
-
+    # Arrange
+    @parameterized.expand(
+        [
+            ("The price is 2,234.56 kr.", "2234.56"),
+            ("No numbers here", "No numbers here"),
+        ]
+    )
     def test_numbers_extracted(self, input_string, expected_output):
-        #Act
+        # Act
         result = extract_numbers_from_string(input_string)
-        #Assert
+        # Assert
         self.assertEqual(result, expected_output)
 
 
@@ -49,11 +57,10 @@ class MockConfig:
 
 class TestGetProductFromHTML(TestCase):
     def test_get_product_from_html(self):
-        
-        #Arrange
+        # Arrange
         mock_config = MockConfig()
-        #Simulate an HTML page
-        mock_html = """ 
+        # Simulate an HTML page
+        mock_html = """
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -80,14 +87,16 @@ class TestGetProductFromHTML(TestCase):
             </html>
             """
         mock_price_match = MagicMock()
-        mock_binary_screenshot = b'mocked_screenshot'
+        mock_binary_screenshot = b"mocked_screenshot"
 
-        #Act
-        result = get_product_from_html(mock_config, mock_html, mock_price_match, mock_binary_screenshot)
+        # Act
+        result = get_product_from_html(
+            mock_config, mock_html, mock_price_match, mock_binary_screenshot
+        )
 
-        #Assert
-        self.assertEqual(result, mock_price_match) 
-        self.assertEqual(mock_price_match.price, "500")  
+        # Assert
+        self.assertEqual(result, mock_price_match)
+        self.assertEqual(mock_price_match.price, "500")
         self.assertEqual(mock_price_match.shipping_price, "20")
         self.assertEqual(mock_price_match.name, "Product Title")
         self.assertEqual(mock_price_match.stock_status, "In Stock")
