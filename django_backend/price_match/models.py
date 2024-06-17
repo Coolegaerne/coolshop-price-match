@@ -63,3 +63,8 @@ class StatusMessages:
     ALREADY_EXIST = {"status": "SUCCESS", "message": "ALREADY_EXIST"}
     SUCCESS = {"status": "SUCCESS", "message": "SUCCESS"}
     ERROR = {"status": "ERROR", "message": "ERROR"}
+
+
+class BlackList(models.Model):
+    base_url = models.CharField(max_length=512, primary_key=True)
+    reason = models.CharField(max_length=1024, blank=True)

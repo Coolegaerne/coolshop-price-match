@@ -16,10 +16,9 @@ def scrape(request):
     url = request.data.get("url", "")
     postal_code = request.data.get("postal_code", "")
     email = request.data.get("email", "")
-    try:
-        message = scrape_website(url, postal_code, email)
-    except:
-        message = StatusMessages.ERROR
+
+    message = scrape_website(url, postal_code, email)
+    print(message)
     return Response(message)
 
 

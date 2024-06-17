@@ -2,7 +2,7 @@ from base64 import b64encode
 
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from price_match.models import Config, PriceMatch
+from price_match.models import BlackList, Config, PriceMatch
 
 
 class PriceMatchAdmin(admin.ModelAdmin):
@@ -32,5 +32,10 @@ class ConfigAdmin(admin.ModelAdmin):
     list_display = ["base_url"]
 
 
+class BlacklistAdmin(admin.ModelAdmin):
+    list_display = ["base_url", "reason"]
+
+
 admin.site.register(PriceMatch, PriceMatchAdmin)
 admin.site.register(Config, ConfigAdmin)
+admin.site.register(BlackList, BlacklistAdmin)

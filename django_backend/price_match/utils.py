@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from django.utils import timezone
-from price_match.models import Config, PriceMatch, StatusMessages
+from price_match.models import BlackList, Config, PriceMatch, StatusMessages
 from selenium import webdriver
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.chrome.options import Options
@@ -22,6 +22,8 @@ def scrape_website(url: str, postal_code: str, email: str) -> StatusMessages:
     price_match.email = email
     if __product_already_accepted(price_match.url):
         return StatusMessages.ALREADY_EXIST
+    elif __website_in_blacklist(url):
+        return __get_blacklist_reason(url)
     else:
         try:
             config = __get_config(price_match.url)
@@ -134,12 +136,29 @@ def get_product_from_html(
     return price_match
 
 
+def __website_in_blacklist(url: str) -> bool:
+    base_url = __get_base_url(url)
+    return BlackList.objects.filter(pk=base_url).exists()
+
+
+def __get_blacklist_reason(url: str) -> StatusMessages:
+    base_url = __get_base_url(url)
+    reason = BlackList.objects.get(base_url=base_url).reason
+    status_message = {"status": "SUCCESS", "message": reason}
+    return status_message
+
+
 def __get_config(url: str) -> Config:
+    base_url = __get_base_url(url)
+    return Config.objects.get(pk=base_url)
+
+
+def __get_base_url(url: str) -> str:
     no_prefix = (
         url.removeprefix("http://").removeprefix("https://").removeprefix("www.")
     )
     base_url = no_prefix.split("/")[0]
-    return Config.objects.get(pk=base_url)
+    return base_url
 
 
 def extract_numbers_from_string(input_string: str) -> str:
