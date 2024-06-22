@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.urls import path
-from django.views.decorators.csrf import csrf_exempt
 from price_match.views import (PriceMatchListCreate,
-                               PriceMatchRetrieveUpdateDestroy, scrape)
+                                PriceMatchRetrieveUpdateDestroy, scrape)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

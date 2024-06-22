@@ -1,8 +1,3 @@
-import base64
-import json
-
-from django.http import HttpResponse, JsonResponse
-from django.views import View
 from price_match.models import PriceMatch, StatusMessages
 from price_match.serializers import PriceMatchSerializer
 from price_match.utils import scrape_website
@@ -23,11 +18,13 @@ def scrape(request):
     return Response(message)
 
 
+# POST & GET (ALL)
 class PriceMatchListCreate(generics.ListCreateAPIView):
     queryset = PriceMatch.objects.all()
     serializer_class = PriceMatchSerializer
 
 
+# GET, PUT & DELETE (INDIVIDUAL)
 class PriceMatchRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = PriceMatch.objects.all()
     serializer_class = PriceMatchSerializer

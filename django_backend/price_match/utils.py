@@ -30,7 +30,7 @@ def scrape_website(url: str, postal_code: str, email: str) -> StatusMessages:
             )
             get_product_from_html(config, page_source, price_match, binary_screenshot)
         except Config.DoesNotExist:
-            pass
+            pass  # ! Better exception handling
         price_match.save()
         return StatusMessages.SUCCESS
 

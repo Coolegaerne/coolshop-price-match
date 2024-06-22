@@ -54,7 +54,7 @@ const Form = () => {
     return (
         <div className='p-4'>
             <div className='max-w-[720px] m-auto'>
-                <h1 className='font-bold text-4xl pb-4'>Opret prismatch</h1>
+                <h1 className='font-bold text-4xl pb-4'>Send prismatch-efterspørgsel</h1>
                 <form className='my-8' onSubmit={handleSubmit}>
                     <div className='mb-4'>
                         <label htmlFor='url' className='block mb-2 text-sm font-medium'>Produkt link (ikke til Coolshop)</label>
@@ -68,7 +68,7 @@ const Form = () => {
                         <label htmlFor='email' className='block mb-2 text-sm font-medium'>Din email</label>
                         <input type='email' id='email' name='email' value={formData.email} onChange={handleChange} className='border hover:border-slate-400 focus:border-slate-400 focus:outline-none text-sm rounded block w-full p-2.5 bg-gray-200' placeholder='imcool@gmail.com' required />
                     </div>
-                    <button type='submit' disabled={buttonDisabled} className='focus:outline-none border focus:from-blue-600 focus:to-blue-900 rounded p-4 px-8 bg-gradient-to-b from-blue-500 to-blue-800 hover:from-blue-600 hover:to-blue-900 w-full text-white font-bold text-xl'>Indsend formular 🚀</button>
+                    <button type='submit' disabled={buttonDisabled} className='focus:outline-none border focus:from-blue-600 focus:to-blue-900 rounded p-4 px-8 bg-gradient-to-b from-blue-500 to-blue-800 hover:from-blue-600 hover:to-blue-900 w-full text-white font-bold text-xl'>Send prismatch-efterspørgsel 🚀</button>
                 </form>
             </div>
         </div>
